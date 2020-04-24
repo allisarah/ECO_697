@@ -1,0 +1,321 @@
+---
+title: "ECo 697DR - Polygon data"
+subtitle:  "Deck 1"
+author: "Michael France Nelson"
+date: Spring 2020
+output:
+  beamer_presentation:
+    pandoc_args: !expr paste0(here::here('css', 'beamer.yaml'))
+header-includes:
+  \input{`r here::here("css", "headers_tikz.tex")`}
+---
+
+
+
+```{r setup, include = FALSE, echo = FALSE}
+require(here)
+require(gstat)
+require(sp)
+require(ggplot2)
+require(rspatial)
+
+source(here("data", "environment_vars.R"))
+```
+
+
+# For today
+
+\vfill
+
+Today is all about polygon concepts!
+
+Wednesday:
+
+- Examples in R
+
+
+
+
+# Concepts
+
+\vfill
+- What are polygons?
+
+\vfill
+- How do they differ from other data types we've looked at?
+
+
+
+
+
+# Concepts
+
+What are polygons?
+
+- Vector data structures.
+
+\vfill
+How do the differ from other data types we've looked at?
+
+- Convey a sense of **area**.
+    - Landscape composition.
+    - How is this different than raster data?
+- Lossless transformations*
+    - Why?
+- Convey a sense of **shape**.
+    - Landscape configuration
+- They have definite borders, insides, and outsides.
+
+
+
+# Concepts
+
+\vfill
+- What do **grain** and **extent** mean in a polygon world?
+
+\vfill
+- What is a **convex** polygon?
+
+\vfill
+- What is a **convex hull**?
+
+
+# Concepts
+
+\vfill
+- What sorts of questions do polygons suggest and/or answer?
+
+\vfill
+- How are these similar/different from other geographic data types?
+
+
+
+
+# Concepts: Challenges and Opportunities
+
+Relative to other geographic data types, what are some advantages of polygon data?
+
+- What are some advantages of polygon data?
+- What are some challenges?
+
+
+
+# Concepts: Opportunities
+
+Relative to other geographic data types, what are some advantages of polygon data?
+
+- Potentially richer data source
+  - Provide shape information.
+  - Provide landscape configuration information.
+
+
+
+# Concepts: Challenges
+\vfill
+Relative to other geographic data types, what are some challenges?
+
+- Potentially poorer data source: delocalization
+- Boundaries can give false sense of confidence
+- Borders may hide, or even misrepresent important phenomena.
+- Political borders vs. population, ethnic, economic, other realities.
+- Computational complexity: computational geometry
+
+
+
+
+# Polygons: representations in R (and other GISs)
+
+\vfill
+Two main R packages:  `sp` and `sf`.
+
+- Use some of the same c code under the hood.
+- `sf` (Simple Features) is newer.
+- `sf` (Simple Features) is an ISO standard.
+- Individual polygons: set of **vertices**.
+- Projection information
+
+
+
+
+# Polygons: representations in R (and other GISs)
+\vfill
+Sets of polygons: 
+
+- `SpatialPolygons*` objects
+- `sf` objects
+    
+\vfill
+Set of polygon **attributes**.
+
+- variables
+- `sp` uses `data.frame` objects.
+- `sf` uses `tibble` objects.
+  
+
+
+
+# Polygons: Distance and Configuration
+
+\vfill
+What does **distance** mean in a polygon context?
+
+- Which two distance types did we use for point data?
+
+Polygon Neighborhoods:
+
+- first degree
+- second degree
+
+How could we quantify **shape**?
+
+
+
+
+# Polygons: Distance and Configuration
+
+What does **distance** mean in a polygon context?
+
+- centroid distance
+- minimum edge/vertex distance
+- edge and vertex continuity
+
+Neighborhoods:
+
+- first degree: share an edge
+- second degree: shares an edge with a first degree neighbor
+
+How could we quantify **shape**?
+
+- area, perimeter
+- perimeter/area ratio
+- fractal dimension
+
+
+
+
+# Polygon Manipulations
+
+What might we want to do with polygons?
+
+
+
+
+# Polygon Manipulations
+
+\vfill
+Classic GIS operations:
+
+- Buffers
+- Intersections
+- Unions
+- Type inter conversion
+
+
+
+
+# Polygon Operations
+
+\vfill
+- Point-in-polygon queries
+- Calculate centroids
+- Tessellations
+- Data type conversions:
+    - polygon to raster
+    - point to raster
+    - line to raster
+    - raster to polygon
+
+
+
+# Disaggregation
+\vfill
+- What is it?
+
+
+
+# Disaggregation
+
+\vfill
+- A kind of **masking**
+    - Focal Area, Moving window
+    - Simple area weighting
+    - Mask area weighting
+
+
+
+# Disaggregation
+
+
+
+\includegraphics[width = 0.6\paperwidth]{`r here("slides", "images", "spatial_disaggregation_2.png")`}
+
+
+
+
+
+# Polygons can be dirty!
+
+What could go wrong with polygons?
+
+
+
+
+# Polygons can be dirty!
+
+Edges of neighboring polygons may be slightly different
+
+- mis-recorded
+- round-off errors
+- error propagation
+
+Self-intersections
+
+- big problem for computational geometry
+
+Rasterizing/polygonizing operations are complicated and/or lossy.
+
+Projections: area, distance, shape 
+
+
+
+# Examples
+
+Gerrymandering
+
+- How could polygon analysis address gerrymandering?
+
+
+
+
+# School segregation:  Natural attendance zone
+\vfill
+- How could polygon analysis address gerrymandering?
+- Compare demographics in Voronoi-tessellated school zones and political school zones.
+
+
+
+
+# School segregation:  Natural attendance zone
+\vfill
+Voronoi considerations:
+
+- Voronoi polygons are not weighted by population
+- Minimizes Euclidean distance, but not necessarily travel time
+- Do not consider physical barriers: rivers, mountains, etc.
+- Insensitive to political borders
+
+
+
+# School segregation:  Natural attendance zone
+\vfill
+- Simpson diversity quantified in real school attendance district
+- Simpson diversity quantified in Voronoi attendance district
+- Real/Voronoi ratio
+
+
+# School segregation:  Natural attendance zone
+
+\begin{center}
+\includegraphics[width = 0.75\paperwidth]{`r here("slides", "images", "richards_fig_2.png")`}
+\footnote{Richards, M.P. (2014). The Gerrymandering of School Attendance Zones and the Segregation of Public Schools: A Geospatial Analysis. American Educational Research Journal 51, 1119–1157.}
+\end{center}
